@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import dgo.exception.InvalidMoveException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class TestGoban {
 	@Test

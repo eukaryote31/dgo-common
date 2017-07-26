@@ -62,7 +62,7 @@ public class Goban implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object another) {
+	public final boolean equals(Object another) {
 		// use zobrist hash because comparing two integers is a lot faster than
 		// comparing two arrays [citation needed]
 		if (another == null)
@@ -87,7 +87,7 @@ public class Goban implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return zobristhash;
 	}
 
@@ -105,9 +105,9 @@ public class Goban implements Serializable {
 		int newhash;
 		if (nstate == NONE) {
 			// undo state at (x, y) by xoring it by itself
-			newhash = zobristhash ^ ZobristHash.getIndice(x, y, this.getState(x, y));
+			newhash = ZobristHash.applyIndice(zobristhash, x, y, this.getState(x, y));
 		} else {
-			newhash = zobristhash ^ ZobristHash.getIndice(x, y, nstate);
+			newhash = ZobristHash.applyIndice(zobristhash, x, y, nstate);
 		}
 
 		// make copy of states array with new state set
