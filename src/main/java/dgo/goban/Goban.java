@@ -1,6 +1,5 @@
 package dgo.goban;
 
-import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +11,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
+import dgo.BoardPos;
 import dgo.exception.InvalidMoveException;
 import dgo.util.ZobristHash;
 import lombok.Synchronized;
@@ -127,32 +127,32 @@ public class Goban implements Serializable {
 		if (nstate == NONE)
 			throw new IllegalArgumentException();
 
-		List<Point> neighbors = getNeighbors(x, y);
+		List<BoardPos> neighbors = getNeighbors(x, y);
 
 		// check if placed stone has liberties itself
 		boolean hasLiberties = false;
-		for (Point p : neighbors) {
-			if (getState(p.x, p.y) == NONE) {
+		for (BoardPos p : neighbors) {
+			if (getState(p.getX(), p.getY()) == NONE) {
 				hasLiberties = true;
 				break;
 			}
 		}
 
-		List<Point> toremove = new LinkedList<>();
+		List<BoardPos> toremove = new LinkedList<>();
 
 		int numoppositeadj = 0;
-		for (Point p : neighbors) {
-			if (getState(p.x, p.y) == NONE)
+		for (BoardPos p : neighbors) {
+			if (getState(p.getX(), p.getY()) == NONE)
 				continue;
 
-			if (getState(p.x, p.y) == nstate) {
+			if (getState(p.getX(), p.getY()) == nstate) {
 				// neighbor same state as placed stone
 
 				if (hasLiberties) {
 					// has liberties and is connected, therefore alive
 					continue;
 				} else {
-					Set<Point> s = checkGroup(p, new Point(x, y));
+					Set<BoardPos> s = checkGroup(p, BoardPos.of(x, y));
 
 					// if current spot would lead to death of group, then move
 					// is suicide
@@ -164,7 +164,7 @@ public class Goban implements Serializable {
 
 				numoppositeadj++;
 
-				Set<Point> s = checkGroup(p, new Point(x, y));
+				Set<BoardPos> s = checkGroup(p, BoardPos.of(x, y));
 
 				toremove.addAll(s);
 			}
@@ -179,9 +179,9 @@ public class Goban implements Serializable {
 			return this.setState(x, y, nstate);
 
 		byte[] retstate = Arrays.copyOf(this.getState(), WIDTH * HEIGHT);
-		for (Point p : toremove) {
+		for (BoardPos p : toremove) {
 			// clear dead stones from board
-			retstate[p.x + WIDTH * p.y] = NONE;
+			retstate[p.getX() + WIDTH * p.getY()] = NONE;
 		}
 
 		retstate[x + WIDTH * y] = nstate;
@@ -193,21 +193,21 @@ public class Goban implements Serializable {
 	 * Internal method for checking if a group would be alive given a placed
 	 * stone.
 	 */
-	private Set<Point> checkGroup(Point pt, Point newpt) {
-		Set<Point> connected = new HashSet<>();
-		Queue<Point> queue = new LinkedList<>();
+	private Set<BoardPos> checkGroup(BoardPos pt, BoardPos newpt) {
+		Set<BoardPos> connected = new HashSet<>();
+		Queue<BoardPos> queue = new LinkedList<>();
 		queue.add(pt);
 		connected.add(pt);
 
-		int nstate = getState(pt.x, pt.y);
+		int nstate = getState(pt.getX(), pt.getY());
 
 		// simple, naïve floodfill
 
 		while (!queue.isEmpty()) {
-			Point p = queue.poll();
+			BoardPos p = queue.poll();
 
-			for (Point conn : getNeighbors(p.x, p.y)) {
-				int state = conn.equals(newpt) ? -getState(pt.x, pt.y) : getState(conn.x, conn.y);
+			for (BoardPos conn : getNeighbors(p.getX(), p.getY())) {
+				int state = conn.equals(newpt) ? -getState(pt.getX(), pt.getY()) : getState(conn.getX(), conn.getY());
 
 				if (state == NONE) {
 					// if theres a liberty, the entire group is alive
@@ -231,17 +231,17 @@ public class Goban implements Serializable {
 		return connected;
 	}
 
-	public List<Point> getNeighbors(int x, int y) {
-		List<Point> ret = new ArrayList<>(4);
+	public List<BoardPos> getNeighbors(int x, int y) {
+		List<BoardPos> ret = new ArrayList<>(4);
 
 		if (validateXY(x - 1, y))
-			ret.add(new Point(x - 1, y));
+			ret.add(BoardPos.of(x - 1, y));
 		if (validateXY(x, y - 1))
-			ret.add(new Point(x, y - 1));
+			ret.add(BoardPos.of(x, y - 1));
 		if (validateXY(x + 1, y))
-			ret.add(new Point(x + 1, y));
+			ret.add(BoardPos.of(x + 1, y));
 		if (validateXY(x, y + 1))
-			ret.add(new Point(x, y + 1));
+			ret.add(BoardPos.of(x, y + 1));
 
 		return ret;
 	}
