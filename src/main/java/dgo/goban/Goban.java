@@ -86,6 +86,10 @@ public class Goban implements Serializable {
 		return state[x + y * WIDTH];
 	}
 
+	public int getState(BoardPos pos) {
+		return getState(pos.getX(), pos.getY());
+	}
+
 	@Override
 	public final int hashCode() {
 		return zobristhash;
@@ -116,6 +120,10 @@ public class Goban implements Serializable {
 
 		return new Goban(newstate, newhash);
 	}
+	
+	public Goban setState(BoardPos pos, byte nstate) {
+		return setState(pos.getX(), pos.getY(), nstate);
+	} 
 
 	public Goban placeStone(int x, int y, byte nstate) {
 		// placing stones on stones is illegal
@@ -188,6 +196,10 @@ public class Goban implements Serializable {
 
 		return new Goban(retstate);
 	}
+	
+	public Goban placeStone(BoardPos pos, byte nstate) {
+		return placeStone(pos.getX(), pos.getY(), nstate);
+	}
 
 	/**
 	 * Internal method for checking if a group would be alive given a placed
@@ -244,6 +256,10 @@ public class Goban implements Serializable {
 			ret.add(BoardPos.of(x, y + 1));
 
 		return ret;
+	}
+	
+	public List<BoardPos> getNeighbors(BoardPos pos) {
+		return getNeighbors(pos.getX(), pos.getY());
 	}
 
 	private static void validateState(int state) {
