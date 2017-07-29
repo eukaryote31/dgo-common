@@ -13,6 +13,9 @@ jacocoTestReport {
 
 repositories {
     jcenter()
+    maven {
+    	url 'https://www.smartics.eu/nexus/content/repositories/public/'
+    }
 }
 
 dependencies {
@@ -24,6 +27,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
     testCompile 'nl.jqno.equalsverifier:equalsverifier:2.3.1'
+    testCompile group: 'de.smartics.util', name: 'smartics-test-utils', version: '0.3.3'
+    
 }
 
 test {
