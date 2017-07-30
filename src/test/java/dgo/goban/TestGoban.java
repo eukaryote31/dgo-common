@@ -101,5 +101,39 @@ public class TestGoban {
 		gb = gb.placeStone(5, 5, Goban.WHITE);
 		
 		assertNotNull(gb);
+  }
+  
+  @Test
+	public void testRemoveLarge() {
+		Goban gb = Goban.emptyGoban();
+		for (int y = 0; y < Goban.HEIGHT; y++) {
+			for (int x = 0; x < Goban.WIDTH; x++) {
+				if (x == 1 && y == 1) continue;
+				
+				gb = gb.placeStone(x, y, Goban.BLACK);
+			}
+		}
+		
+		// sanity check
+		assertNotNull(gb);
+		
+		// suicide check
+		assertNull(gb.placeStone(1, 1, Goban.BLACK));
+		
+		// removal check
+		Goban removed = gb.placeStone(1, 1, Goban.WHITE);
+		assertEquals(Goban.emptyGoban().placeStone(1, 1, Goban.WHITE), removed);
+	}
+	
+	@Test
+	public void testToStringDoesntExplode() {
+		Goban empty = Goban.emptyGoban();
+		
+		empty.toString();
+		
+		Goban pop = empty.placeStone(3, 3, Goban.BLACK).placeStone(15, 15, Goban.WHITE);
+		
+		pop.toString();	
+
 	}
 }
