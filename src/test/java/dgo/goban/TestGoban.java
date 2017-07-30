@@ -71,4 +71,35 @@ public class TestGoban {
 		
 		assertNull(gb);
 	}
+	
+	@Test
+	public void testGobanNonSuicide() {
+		
+		// ###
+		// #OO#
+		// #O O
+		//  #O
+		
+		
+		Goban gb = Goban.emptyGoban();
+
+		gb = gb.placeStone(3, 3, Goban.BLACK);
+		gb = gb.placeStone(3, 4, Goban.BLACK);
+		gb = gb.placeStone(3, 5, Goban.BLACK);
+		gb = gb.placeStone(4, 6, Goban.BLACK);
+		
+		gb = gb.placeStone(4, 3, Goban.BLACK);
+		gb = gb.placeStone(5, 3, Goban.BLACK);
+		gb = gb.placeStone(6, 4, Goban.BLACK);
+
+		gb = gb.placeStone(4, 4, Goban.WHITE);
+		gb = gb.placeStone(4, 5, Goban.WHITE);
+		gb = gb.placeStone(5, 4, Goban.WHITE);
+		gb = gb.placeStone(5, 6, Goban.WHITE);
+		gb = gb.placeStone(6, 5, Goban.WHITE);
+		
+		gb = gb.placeStone(5, 5, Goban.WHITE);
+		
+		assertNotNull(gb);
+	}
 }

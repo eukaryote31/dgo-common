@@ -160,19 +160,20 @@ public class Goban implements Serializable {
 					// has liberties and is connected, therefore alive
 					continue;
 				} else {
-					Set<BoardPos> s = checkGroup(p, BoardPos.of(x, y));
+					Set<BoardPos> s = checkGroup(p, BoardPos.of(x, y), nstate);
 
 					// if current spot would lead to death of group, then move
 					// is suicide
-					if (!s.isEmpty())
+					if (!s.isEmpty()) {
 						return null;
+					}
 				}
 			} else {
 				// neighbor different state as placed stone
 
 				numoppositeadj++;
 
-				Set<BoardPos> s = checkGroup(p, BoardPos.of(x, y));
+				Set<BoardPos> s = checkGroup(p, BoardPos.of(x, y), nstate);
 
 				toremove.addAll(s);
 			}
@@ -205,7 +206,7 @@ public class Goban implements Serializable {
 	 * Internal method for checking if a group would be alive given a placed
 	 * stone.
 	 */
-	private Set<BoardPos> checkGroup(BoardPos pt, BoardPos newpt) {
+	private Set<BoardPos> checkGroup(BoardPos pt, BoardPos newpt, byte newstate) {
 		Set<BoardPos> connected = new HashSet<>();
 		Queue<BoardPos> queue = new LinkedList<>();
 		queue.add(pt);
@@ -218,8 +219,8 @@ public class Goban implements Serializable {
 		while (!queue.isEmpty()) {
 			BoardPos p = queue.poll();
 
-			for (BoardPos conn : getNeighbors(p.getX(), p.getY())) {
-				int state = conn.equals(newpt) ? -getState(pt.getX(), pt.getY()) : getState(conn.getX(), conn.getY());
+			for (BoardPos conn : getNeighbors(p)) {
+				int state = conn.equals(newpt) ? newstate : getState(conn.getX(), conn.getY());
 
 				if (state == NONE) {
 					// if theres a liberty, the entire group is alive
